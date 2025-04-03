@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Sign Up</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="main-header">
+    <h1>RFID-Based Number Plate System</h1>
+    <nav>
+      <ul class="nav-links">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="login.html">Login</a></li>
+        <li><a href="signup.html">Signup</a></li>
+      </ul>
+    </nav>
+  </header>
+  <div class="login-container">
+    <h2>Sign Up</h2>
+    <form id="signupForm">
+      <div class="input-group">
+        <label for="username">Username</label>
+        <input type="text" id="username" name="username" required placeholder="Enter your username">
+      </div>
+      <div class="input-group">
+        <label for="email">Email</label>
+        <!-- Using a pattern to force a valid email format -->
+        <input type="email" id="email" name="email" required placeholder="user@example.com">
+      </div>
+      <div class="input-group">
+        <label for="password">Password</label>
+        <input type="password" id="password" name="password" required placeholder="Create a strong password">
+        <div id="strengthMsg"></div>
+      </div>
+      <button type="submit" id="signupBtn" disabled>Sign Up</button>
+    </form>
+    <div id="message"></div>
+  </div>
+  <script>
+    const signupForm = document.getElementById('signupForm');
+    const signupBtn = document.getElementById('signupBtn');
+    const strengthMsg = document.getElementById('strengthMsg');
+    const message = document.getElementById('message');
+
+    function validateEmail(email) {
+      const regex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+      return regex.test(email);
+    }
+
+    function isStrongPassword(password) {
+      // Must have at least one lowercase, one uppercase, one digit, one special char and minimum 8 characters
+      const strong = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@#$%^&+=!]).{8,}$/;
+      return strong.test(password);
+    }
+
+    function checkSignupValid() {
+      const username = signupForm.username.value.trim();
+      const email = signupForm.email.value;
+      const password = signupForm.password.value;
+      const valid = username && validateEmail(email) && isStrongPassword(password);
+      signupBtn.disabled = !valid;
+    }
+
+    signupForm.password.addEventListener('input', () => {
+      const password = signupForm.password.value;
+      const strong = isStrongPassword(password);
+      strengthMsg.textContent = strong
+        ? '✅ Strong password'
+        : '❌ 8+ chars, uppercase, number, special char';
+      checkSignupValid();
+    });
+
+    signupForm.email.addEventListener('input', checkSignupValid);
+    signupForm.username.addEventListener('input', checkSignupValid);
+
+    signupForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const username = signupForm.username.value;
+      const email = signupForm.email.value;
+      const password = signupForm.password.value;
+      try {
+        const res = await fetch('/api/signup', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name: username, email, password })
+        });
+        const data = await res.json();
+        message.textContent = data.message || data.error;
+        if(data.warn === "Successful"){
+          // Redirect to login page on success
+          window.location.href = "login.html";
+        }
+      } catch (error) {
+        message.textContent = 'Error signing up. Please try again.';
+      }
+    });
+  </script>
+</body>
+</html>

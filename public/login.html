@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>User Login</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="main-header">
+    <h1>RFID-Based Number Plate System</h1>
+    <nav>
+      <ul class="nav-links">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="login.html">Login</a></li>
+        <li><a href="signup.html">Signup</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <div class="login-container">
+    <h2>User Login</h2>
+    <form id="loginForm">
+      <div class="input-group">
+        <label for="email">Email</label>
+        <input type="email" id="email" name="email" required placeholder="user@example.com" />
+      </div>
+      <div class="input-group">
+        <label for="password">Password</label>
+        <input type="password" id="password" name="password" required placeholder="Enter your password" />
+      </div>
+      <button type="submit">Login</button>
+    </form>
+    <div id="message" style="margin-top: 10px; color: red;"></div>
+  </div>
+
+  <script>
+    const loginForm = document.getElementById('loginForm');
+    const message = document.getElementById('message');
+
+    loginForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const email = loginForm.email.value;
+      const password = loginForm.password.value;
+
+      try {
+        const res = await fetch('http://192.168.32.86:4000/api/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password })
+        });
+
+        const data = await res.json();
+        console.log(data); // Debug output
+
+        if (data.warn === "Successful") {
+          message.style.color = "green";
+          message.textContent = data.message;
+
+          // Store token and user info
+          localStorage.setItem("token", data.token);
+          localStorage.setItem("userName", data.user.name);
+          localStorage.setItem("userBalance", data.user.balance);
+          localStorage.setItem("loginTime", data.user.loginTime);
+
+          // Redirect
+          setTimeout(() => {
+            window.location.href = "wallet.html";
+          }, 1000);
+        } else {
+          message.style.color = "red";
+          message.textContent = data.error || "Login failed.";
+        }
+      } catch (err) {
+        console.error(err);
+        message.textContent = "❌ Error connecting to server.";
+      }
+    });
+  </script>
+</body>
+</html>

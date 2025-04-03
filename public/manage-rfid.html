@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Manage RFID Cards</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header>
+    <h1>RFID User Linking</h1>
+    <a href="admin-portal.html">← Back to Admin</a>
+  </header>
+  <main>
+    <form id="linkForm">
+      <h2>Link RFID to User</h2>
+      <input type="email" id="email" placeholder="User Email" required />
+      <input type="text" id="rfid_uid" placeholder="RFID UID (e.g., FD01D804)" required />
+      <button type="submit">Link RFID</button>
+    </form>
+
+    <form id="unlinkForm">
+      <h2>Unlink RFID</h2>
+      <input type="text" id="unlink_uid" placeholder="RFID UID to Unlink" required />
+      <button type="submit">Unlink</button>
+    </form>
+
+    <div id="msgBox"></div>
+  </main>
+
+  <script>
+    const msgBox = document.getElementById("msgBox");
+
+    document.getElementById("linkForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const email = document.getElementById("email").value;
+      const rfid_uid = document.getElementById("rfid_uid").value;
+
+      const res = await fetch("/api/admin/link-rfid", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, rfid_uid })
+      });
+
+      const data = await res.json();
+      msgBox.textContent = data.message || data.error;
+    });
+
+    document.getElementById("unlinkForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const rfid_uid = document.getElementById("unlink_uid").value;
+
+      const res = await fetch("/api/admin/unlink-rfid", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ rfid_uid })
+      });
+
+      const data = await res.json();
+      msgBox.textContent = data.message || data.error;
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Admin Login</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="main-header">
+    <h1>RFID-Based Number Plate System</h1>
+    <nav>
+      <ul class="nav-links">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="admin-login.html">Admin Login</a></li>
+      </ul>
+    </nav>
+  </header>
+  <div class="login-container">
+    <h2>Admin Login</h2>
+    <form id="adminLoginForm">
+      <div class="input-group">
+        <label for="adminEmail">Email</label>
+        <input type="email" id="adminEmail" name="email" required placeholder="Enter admin email">
+      </div>
+      <div class="input-group">
+        <label for="adminPassword">Password</label>
+        <input type="password" id="adminPassword" name="password" required placeholder="Enter password">
+      </div>
+      <button type="submit">Login as Admin</button>
+      <p class="signup-link"><a href="index.html">Back to Home</a></p>
+    </form>
+    <div id="message"></div>
+  </div>
+  <script>
+    const adminLoginForm = document.getElementById('adminLoginForm');
+    const message = document.getElementById('message');
+
+    adminLoginForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const email = document.getElementById('adminEmail').value;
+      const password = document.getElementById('adminPassword').value;
+      try {
+        const res = await fetch('/api/admin/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password })
+        });
+        const data = await res.json();
+        if (data.warn === "Successful" && data.token) {
+          localStorage.setItem("adminToken", data.token);
+          window.location.href = "admin-portal.html";
+        } else {
+          message.textContent = data.error;
+        }
+      } catch (err) {
+        message.textContent = 'Error logging in. Please try again.';
+      }
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>User Wallet</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="styles.css" />
+    <style>
+      nav {
+        background-color: #003366;
+        padding: 10px;
+        text-align: center;
+      }
+
+      nav a {
+        color: white;
+        text-decoration: none;
+        margin: 0 15px;
+        font-weight: bold;
+      }
+
+      nav a:hover {
+        text-decoration: underline;
+      }
+
+      .logout-btn {
+        background: crimson;
+        color: white;
+        border: none;
+        padding: 6px 12px;
+        cursor: pointer;
+        border-radius: 4px;
+        font-weight: bold;
+        margin-left: 10px;
+      }
+
+      .logout-btn:hover {
+        background-color: darkred;
+      }
+
+      table {
+        width: 100%;
+        margin-top: 15px;
+        border-collapse: collapse;
+      }
+
+      th, td {
+        padding: 10px;
+        border: 1px solid #ccc;
+        text-align: left;
+      }
+
+      th {
+        background-color: #0074d9;
+        color: white;
+      }
+
+      tr:nth-child(even) {
+        background-color: #f4f4f4;
+      }
+
+      #status {
+        margin-top: 20px;
+        text-align: center;
+        color: red;
+        font-weight: bold;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>💳 RFID Wallet</h1>
+      <nav>
+        <a href="index.html">Home</a>
+        <a href="payments.html">Payments</a>
+        <a href="wallet.html">Wallet</a>
+        <button class="logout-btn" onclick="logout()">Logout</button>
+      </nav>
+    </header>
+
+    <main>
+      <div id="userInfo">
+        <h2>Name: <span id="userName"></span></h2>
+        <h3>Balance: ₹<span id="userBalance"></span></h3>
+      </div>
+
+      <h3>Payment History</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Amount</th>
+            <th>Reason</th>
+            <th>Vehicle</th>
+            <th>Time</th>
+          </tr>
+        </thead>
+        <tbody id="paymentHistory"></tbody>
+      </table>
+
+      <div id="status"></div>
+    </main>
+
+    <script>
+      const token = localStorage.getItem("token");
+
+      if (!token) {
+        window.location.href = "login.html";
+      }
+
+      async function loadWallet() {
+        try {
+          const res = await fetch("http://192.168.32.86:4000/api/wallet", {
+            headers: {
+              Authorization: token,
+            },
+          });
+
+          const data = await res.json();
+          console.log(data);
+
+          if (data.warn === "Successful") {
+            document.getElementById("userName").innerText =
+              localStorage.getItem("userName") || "User";
+            document.getElementById("userBalance").innerText = data.balance;
+
+            const paymentTable = document.getElementById("paymentHistory");
+            paymentTable.innerHTML = "";
+
+            if (!data.payments.length) {
+              paymentTable.innerHTML = `<tr><td colspan="4">No payments found.</td></tr>`;
+            } else {
+              data.payments.forEach((p) => {
+                const row = `<tr>
+                  <td>₹${p.amount}</td>
+                  <td>${p.reason}</td>
+                  <td>${p.vehicle}</td>
+                  <td>${new Date(p.created_at).toLocaleString()}</td>
+                </tr>`;
+                paymentTable.innerHTML += row;
+              });
+            }
+          } else {
+            document.getElementById("status").innerText = "⚠ " + data.error;
+          }
+        } catch (err) {
+          console.error(err);
+          document.getElementById("status").innerText =
+            "❌ Cannot connect to server.";
+        }
+      }
+
+      function logout() {
+        localStorage.clear();
+        window.location.href = "login.html";
+      }
+
+      // Load wallet now + auto-refresh every 5 seconds
+      loadWallet();
+      setInterval(loadWallet, 5);
+    </script>
+  </body>
+</html>

@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>RFID Number Plate System</title>
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    body {
+      margin: 0;
+      font-family: "Segoe UI", sans-serif;
+      color: #fff;
+      background: url('https://images.unsplash.com/photo-1495020689067-958852a7765e?auto=format&fit=crop&w=1950&q=80') no-repeat center center fixed;
+      background-size: cover;
+    }
+
+    .main-header {
+      background: rgba(0, 0, 0, 0.75);
+      padding: 1.5rem 1rem;
+      text-align: center;
+      animation: slideDown 1s ease-out;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    }
+
+    .main-header h1 {
+      margin: 0;
+      font-size: 2rem;
+      letter-spacing: 1px;
+    }
+
+    nav .nav-links {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-top: 1rem;
+      list-style: none;
+      padding: 0;
+    }
+
+    nav .nav-links li {
+      margin: 0.5rem 1rem;
+    }
+
+    nav .nav-links a {
+      color: #fff;
+      text-decoration: none;
+      font-size: 1rem;
+      padding: 8px 16px;
+      border: 1px solid transparent;
+      border-radius: 8px;
+      transition: all 0.3s ease;
+    }
+
+    nav .nav-links a:hover {
+      background-color: rgba(255, 255, 255, 0.15);
+      border-color: #fff;
+    }
+
+    .main-content {
+      text-align: center;
+      padding: 80px 20px;
+      max-width: 700px;
+      margin: auto;
+      animation: fadeIn 2s ease-in;
+    }
+
+    .main-content h2 {
+      font-size: 2rem;
+      margin-bottom: 1rem;
+    }
+
+    .main-content p {
+      font-size: 1.1rem;
+      line-height: 1.6;
+      margin-bottom: 2rem;
+    }
+
+    .cta-btn {
+      background-color: #007bff;
+      color: #fff;
+      font-size: 1.1rem;
+      padding: 14px 28px;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+      text-decoration: none;
+    }
+
+    .cta-btn:hover {
+      background-color: #0056b3;
+    }
+
+    .main-footer {
+      background-color: rgba(0, 0, 0, 0.8);
+      text-align: center;
+      padding: 1rem;
+      font-size: 0.9rem;
+      position: fixed;
+      width: 100%;
+      bottom: 0;
+      left: 0;
+    }
+
+    @keyframes slideDown {
+      from {
+        transform: translateY(-100%);
+        opacity: 0;
+      }
+      to {
+        transform: translateY(0);
+        opacity: 1;
+      }
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @media (max-width: 768px) {
+      .main-header h1 {
+        font-size: 1.5rem;
+      }
+      nav .nav-links a {
+        font-size: 0.9rem;
+        padding: 6px 12px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Header -->
+  <header class="main-header">
+    <h1>🚗 RFID-Based Number Plate System</h1>
+    <nav>
+      <ul class="nav-links">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="login.html">Login</a></li>
+        <li><a href="signup.html">Signup</a></li>
+        <li><a href="wallet.html">Wallet</a></li>
+        <li><a href="payments.html">Payments</a></li>
+        <li><a href="admin-login.html">Admin Login</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <!-- Main Content -->
+  <main class="main-content">
+    <h2>Welcome to the Future of Vehicle Management</h2>
+    <p>
+      Track, manage, and pay with ease using our RFID-based vehicle number plate system.
+      Enhance road safety, reduce manual intervention, and speed up toll & traffic workflows.
+    </p>
+    <a href="login.html" class="cta-btn">Get Started</a>
+  </main>
+
+  <!-- Footer -->
+  <footer class="main-footer">
+    &copy; 2025 RFID Number Plate System | Designed with ❤️ for Smart Mobility
+  </footer>
+</body>
+</html>
