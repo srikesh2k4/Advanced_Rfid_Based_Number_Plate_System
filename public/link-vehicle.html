@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Link Vehicle Number</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    body {
+      font-family: "Segoe UI", sans-serif;
+      background: #f4f4f4;
+      margin: 0;
+      padding: 0;
+    }
+
+    header {
+      background: #003366;
+      color: #fff;
+      padding: 15px;
+      text-align: center;
+    }
+
+    .container {
+      max-width: 500px;
+      margin: 40px auto;
+      background: white;
+      padding: 30px;
+      border-radius: 8px;
+      box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
+    }
+
+    label {
+      font-weight: bold;
+      display: block;
+      margin-top: 20px;
+    }
+
+    input {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+
+    button {
+      margin-top: 20px;
+      width: 100%;
+      background-color: #0074d9;
+      color: white;
+      border: none;
+      padding: 12px;
+      font-size: 16px;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #005bb5;
+    }
+
+    .msg {
+      margin-top: 20px;
+      font-weight: bold;
+      color: green;
+    }
+
+    .error {
+      color: red;
+    }
+
+    .back-container {
+      text-align: center;
+      margin-top: 20px;
+    }
+
+    .back-link {
+      text-decoration: none;
+      color: #0074d9;
+      font-size: 16px;
+      font-weight: bold;
+      padding: 8px 16px;
+      border: 1px solid #0074d9;
+      border-radius: 5px;
+      background-color: #f0f8ff;
+      display: inline-block;
+      transition: background-color 0.3s ease;
+    }
+
+    .back-link:hover {
+      background-color: #dbefff;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Link Vehicle Number</h1>
+  </header>
+
+  <div class="back-container">
+    <a href="wallet.html" class="back-link">← Back to Wallet</a>
+  </div>
+
+  <div class="container">
+    <form id="linkVehicleForm">
+      <label for="email">Registered Email</label>
+      <input type="email" id="email" required placeholder="your@email.com" />
+
+      <label for="vehicle">Vehicle Number</label>
+      <input type="text" id="vehicle" required placeholder="TS09AB1234" />
+
+      <button type="submit">Link Vehicle</button>
+    </form>
+    <div id="response" class="msg"></div>
+  </div>
+
+  <script>
+    const token = localStorage.getItem("token");
+
+    document.getElementById("linkVehicleForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const email = document.getElementById("email").value.trim();
+      const vehicle = document.getElementById("vehicle").value.trim().toUpperCase();
+      const responseBox = document.getElementById("response");
+
+      try {
+        const res = await fetch("/api/user/link-vehicle", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: token
+          },
+          body: JSON.stringify({ email, vehicle })
+        });
+
+        const data = await res.json();
+        if (data.message) {
+          responseBox.textContent = data.message;
+          responseBox.classList.remove("error");
+        } else {
+          responseBox.textContent = data.error || "Something went wrong";
+          responseBox.classList.add("error");
+        }
+      } catch (err) {
+        responseBox.textContent = "Server error";
+        responseBox.classList.add("error");
+      }
+    });
+  </script>
+</body>
+</html>

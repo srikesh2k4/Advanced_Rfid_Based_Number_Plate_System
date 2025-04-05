@@ -89,7 +89,7 @@
         const data = await res.json();
         message.textContent = data.message || data.error;
         if(data.warn === "Successful"){
-          // Redirect
+          // Redirect to login page on success========
           window.location.href = "login.html";
         }
       } catch (error) {

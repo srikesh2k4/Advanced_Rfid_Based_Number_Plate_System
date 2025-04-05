@@ -3,16 +3,44 @@
 <head>
   <title>Manage RFID Cards</title>
   <link rel="stylesheet" href="styles.css" />
+  <style>
+    form input {
+      display: block;
+      margin-bottom: 10px;
+      padding: 8px;
+      width: 300px;
+    }
+
+    .form-row {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .form-row input {
+      flex: 1;
+      min-width: 180px;
+    }
+
+    #msgBox {
+      margin-top: 20px;
+      font-weight: bold;
+    }
+  </style>
 </head>
 <body>
   <header>
     <h1>RFID User Linking</h1>
     <a href="admin-portal.html">← Back to Admin</a>
   </header>
+
   <main>
     <form id="linkForm">
       <h2>Link RFID to User</h2>
-      <input type="email" id="email" placeholder="User Email" required />
+      <div class="form-row">
+        <input type="email" id="email" placeholder="User Email" required />
+        <input type="text" id="vehicle" placeholder="Vehicle Number (e.g., TS09EZ1234)" required />
+      </div>
       <input type="text" id="rfid_uid" placeholder="RFID UID (e.g., FD01D804)" required />
       <button type="submit">Link RFID</button>
     </form>
@@ -32,12 +60,13 @@
     document.getElementById("linkForm").addEventListener("submit", async (e) => {
       e.preventDefault();
       const email = document.getElementById("email").value;
+      const vehicle = document.getElementById("vehicle").value;
       const rfid_uid = document.getElementById("rfid_uid").value;
 
       const res = await fetch("/api/admin/link-rfid", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, rfid_uid })
+        body: JSON.stringify({ email, vehicle, rfid_uid })
       });
 
       const data = await res.json();

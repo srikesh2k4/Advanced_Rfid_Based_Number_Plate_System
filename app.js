@@ -126,19 +126,37 @@ function authMiddleware(req, res, next) {
     next();
   });
 }
+// ===== Link Vehicle to Logged-In User =====
+app.post('/api/user/link-vehicle', authMiddleware, async (req, res) => {
+  const { vehicle } = req.body;
+  try {
+    const [check] = await pool.query('SELECT id FROM users WHERE vehicle = ? AND id != ?', [vehicle, req.user.id]);
+    if (check.length > 0) {
+      return res.status(409).json({ error: 'Vehicle number already linked to another user' });
+    }
+
+    await pool.query('UPDATE users SET vehicle = ? WHERE id = ?', [vehicle, req.user.id]);
+    res.json({ message: '✅ Vehicle number linked successfully' });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Server error linking vehicle' });
+  }
+});
+
 app.post('/api/admin/link-rfid', async (req, res) => {
-  const { email, rfid_uid } = req.body;
+  const { email, rfid_uid, vehicle } = req.body;
   try {
     const [rows] = await pool.query('SELECT id FROM users WHERE email = ?', [email]);
     if (rows.length === 0) return res.status(404).json({ error: 'User not found' });
 
-    await pool.query('UPDATE users SET rfid_uid = ? WHERE email = ?', [rfid_uid, email]);
-    res.json({ message: '✅ RFID card linked successfully' });
+    await pool.query('UPDATE users SET rfid_uid = ?, vehicle = ? WHERE email = ?', [rfid_uid, vehicle, email]);
+    res.json({ message: '✅ RFID and Vehicle Number linked successfully' });
   } catch (err) {
     console.error(err);
-    res.status(500).json({ error: 'Failed to link RFID' });
+    res.status(500).json({ error: 'Failed to link RFID and vehicle' });
   }
 });
+
 app.post('/api/admin/unlink-rfid', async (req, res) => {
   const { rfid_uid } = req.body;
   try {
@@ -214,32 +232,24 @@ app.post(
 );
 
 // ===== Wallet Endpoint (Balance & History) =====
-app.get('/api/wallet', authMiddleware, async (req, res) => {
+app.get("/api/wallet", async (req, res) => {
+  const { email } = req.query;
+
   try {
-    const [userRows] = await pool.query('SELECT balance FROM users WHERE id = ?', [req.user.id]);
-    if (userRows.length === 0) {
-      return res.status(400).json({ warn: "Unsuccessful", error: 'User not found' });
-    }
+    const user = await User.findOne({ email });
+    if (!user) return res.status(404).json({ error: "User not found" });
 
-    const balance = userRows[0].balance;
-
-    const [paymentsRows] = await pool.query(
-      'SELECT amount, reason, vehicle, created_at FROM payments WHERE userId = ? ORDER BY created_at DESC',
-      [req.user.id]
-    );
-
-    // ✅ SEND the response
     res.json({
-      warn: "Successful",
-      balance,
-      payments: paymentsRows
+      name: user.name,
+      balance: user.balance,
+      paymentHistory: user.paymentHistory,
     });
-
   } catch (err) {
     console.error(err);
-    res.status(500).json({ warn: "Unsuccessful", error: 'Server error retrieving wallet' });
+    res.status(500).json({ error: "Server error" });
   }
 });
+
 
 
 // ===== Admin Login Endpoint =====

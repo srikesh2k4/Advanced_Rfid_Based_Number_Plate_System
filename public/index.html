@@ -147,7 +147,8 @@
         <li><a href="wallet.html">Wallet</a></li>
         <li><a href="payments.html">Payments</a></li>
         <li><a href="admin-login.html">Admin Login</a></li>
-      </ul>
+        <li><a href="#" id="linkVehicleNav">Link Vehicle</a></li>
+      </ul>                 
     </nav>
   </header>
 
@@ -165,5 +166,22 @@
   <footer class="main-footer">
     &copy; 2025 RFID Number Plate System | Designed with ❤️ for Smart Mobility
   </footer>
+  <script>
+  document.getElementById("linkVehicleNav").addEventListener("click", function (e) {
+    e.preventDefault();
+    const token = localStorage.getItem("token");
+     else {
+      window.location.href = "link-vehicle.html";
+    }
+  });
+</script>
+<script>
+  document.getElementById("linkVehicleNav").addEventListener("click", function (e) {
+    e.preventDefault();
+    const token = localStorage.getItem("token");
+    window.location.href = token ? "link-vehicle.html" : "login.html";
+  });
+</script>
+
 </body>
 </html>
