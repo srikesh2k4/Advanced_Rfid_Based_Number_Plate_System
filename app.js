@@ -11,13 +11,6 @@ const cors = require('cors');
 const app = express();
 const JWT_SECRET = "your_super_secret_key"; // Change this for production
 
-let espStatus = {
-  online: false,
-  lastSeen: null,
-  timeout: null
-};
-
-
 // Create a MySQL connection pool (update with your MySQL credentials)
 const pool = mysql.createPool({
   host: 'localhost',
@@ -295,33 +288,16 @@ app.get('/api/admin/dashboard', async (req, res) => {
   try {
     const token = req.headers['authorization'];
     if (!token) return res.status(401).json({ warn: "Unsuccessful", error: 'No token provided' });
-
     jwt.verify(token, JWT_SECRET, async (err, decoded) => {
-      if (err || decoded.role !== 'admin') {
-        return res.status(403).json({ warn: "Unsuccessful", error: 'Unauthorized access' });
-      }
-
-      const [scansRows] = await pool.query(`
-        SELECT s.*, 
-               CASE 
-                 WHEN u.rfid_uid IS NULL THEN 0 
-                 ELSE 1 
-               END as isRegistered 
-        FROM rfid_scans s
-        LEFT JOIN users u ON u.rfid_uid = s.vehicle
-        ORDER BY s.id DESC 
-        LIMIT 20
-      `);
-
-      const [usersRows] = await pool.query('SELECT name, loginTime FROM users WHERE loginTime IS NOT NULL ORDER BY loginTime DESC LIMIT 10');
+      if (err) return res.status(401).json({ warn: "Unsuccessful", error: 'Invalid token' });
+      if (decoded.role !== 'admin') return res.status(403).json({ warn: "Unsuccessful", error: 'Unauthorized access' });
+      const [scansRows] = await pool.query('SELECT * FROM rfid_scans ORDER BY id DESC LIMIT 10');
+      const [usersRows] = await pool.query('SELECT name, loginTime FROM users WHERE loginTime IS NOT NULL');
       const [totalVehiclesRow] = await pool.query('SELECT COUNT(*) as totalVehicles FROM users');
       const [activeWalletsRow] = await pool.query('SELECT COUNT(*) as activeWallets FROM users WHERE balance > 0');
       const [totalFinesRow] = await pool.query("SELECT IFNULL(SUM(amount),0) as totalFinesIssued FROM payments WHERE reason = 'fine'");
-
       res.json({
         warn: "Successful",
-        espOnline: espStatus.online,   // ✅ include ESP32 status
-        espLastSeen: espStatus.lastSeen,
         recentRFIDScans: scansRows.map(scan => ({
           vehicle: scan.vehicle,
           date: scan.date,
@@ -339,10 +315,9 @@ app.get('/api/admin/dashboard', async (req, res) => {
           totalFinesIssued: totalFinesRow[0].totalFinesIssued
         }
       });
-   });
-
+    });
   } catch (err) {
-    console.error("Dashboard error:", err);
+    console.error(err);
     res.status(500).json({ warn: "Unsuccessful", error: 'Server error retrieving admin dashboard' });
   }
 });
@@ -369,20 +344,6 @@ app.post('/api/rfid/scan', async (req, res) => {
     console.error("RFID scan error:", err);
     res.status(500).json({ message: "Server error" });
   }
-});
-
-app.post("/api/heartbeat", (req, res) => {
-  espStatus.online = true;
-  espStatus.lastSeen = new Date();
-
-  // Reset timer — if no heartbeat for 11 seconds, set offline
-  if (espStatus.timeout) clearTimeout(espStatus.timeout);
-  espStatus.timeout = setTimeout(() => {
-    espStatus.online = false;
-    console.log("❌ ESP32 set to OFFLINE due to missed heartbeat");
-  }, 11000); // 11 sec timeout
-
-  res.sendStatus(200);
 });
 
 

@@ -2,8 +2,8 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Admin Portal</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <link rel="stylesheet" href="styles.css" />
   <style>
     body {
@@ -57,10 +57,6 @@
     }
     .online { background: green; }
     .offline { background: red; }
-    .unregistered {
-      color: red;
-      font-weight: bold;
-    }
   </style>
 </head>
 <body>
@@ -76,9 +72,9 @@
   <main>
     <section class="dashboard-section" id="summary">
       <h2>System Summary</h2>
-      <p><strong>Total Vehicles:</strong> <span id="totalVehicles">-</span></p>
-      <p><strong>Active Wallets:</strong> <span id="activeWallets">-</span></p>
-      <p><strong>Total Fines Issued:</strong> ₹<span id="totalFines">-</span></p>
+      <p><strong>Total Vehicles:</strong> <span id="totalVehicles"></span></p>
+      <p><strong>Active Wallets:</strong> <span id="activeWallets"></span></p>
+      <p><strong>Total Fines Issued:</strong> ₹<span id="totalFines"></span></p>
     </section>
 
     <section class="dashboard-section" id="logins">
@@ -88,20 +84,12 @@
 
     <section class="dashboard-section" id="rfidScans">
       <h2>Recent RFID Scans</h2>
-      <p><strong>Registered:</strong> <span id="registeredCount">0</span> |
-         <strong>Unregistered:</strong> <span id="unregisteredCount">0</span></p>
       <ul id="scanList"></ul>
     </section>
   </main>
 
   <script>
     const token = localStorage.getItem("adminToken");
-    let lastHeartbeat = null;
-
-    function logout() {
-      localStorage.removeItem("adminToken");
-      window.location.href = "admin-login.html";
-    }
 
     async function loadDashboard() {
       const res = await fetch("/api/admin/dashboard", {
@@ -129,42 +117,41 @@
 
       const scanList = document.getElementById("scanList");
       scanList.innerHTML = "";
-
-      let registeredCount = 0;
-      let unregisteredCount = 0;
-
       data.recentRFIDScans.forEach(scan => {
         const li = document.createElement("li");
-        li.innerHTML = `${scan.vehicle} scanned on ${scan.date} at ${scan.time} (${scan.location.village}, ${scan.location.district}, ${scan.location.state})`;
-
-        if (scan.registered) {
-          registeredCount++;
-        } else {
-          li.classList.add("unregistered");
-          unregisteredCount++;
-        }
-
+        li.textContent = `${scan.vehicle} scanned on ${scan.date} at ${scan.time} (${scan.location.village}, ${scan.location.district}, ${scan.location.state})`;
         scanList.appendChild(li);
       });
 
-      document.getElementById("registeredCount").innerText = registeredCount;
-      document.getElementById("unregisteredCount").innerText = unregisteredCount;
+      // ESP32 Status Check: if a scan has occurred in last 60 seconds
+      const latestScanTime = data.recentRFIDScans[0]?.time;
+      const today = new Date();
+      const nowTime = today.toTimeString().split(" ")[0];
+      const [nowH, nowM, nowS] = nowTime.split(":".map(Number));
+      const [scanH, scanM, scanS] = latestScanTime?.split(":".map(Number) || [0,0,0]);
 
-      // ESP32 Status based on lastHeartbeat timestamp
-      const espStatusEl = document.getElementById("espStatus");
-if (data.espOnline) {
-  espStatusEl.textContent = "Online";
-  espStatusEl.classList.remove("offline");
-  espStatusEl.classList.add("online");
-} else {
-  espStatusEl.textContent = "Offline";
-  espStatusEl.classList.remove("online");
-  espStatusEl.classList.add("offline");
-}
+      const nowSec = nowH * 3600 + nowM * 60 + nowS;
+      const scanSec = scanH * 3600 + scanM * 60 + scanS;
+
+      const espStatus = document.getElementById("espStatus");
+      if ((nowSec - scanSec) <= 60) {
+        espStatus.textContent = "Online";
+        espStatus.classList.remove("offline");
+        espStatus.classList.add("online");
+      } else {
+        espStatus.textContent = "Offline";
+        espStatus.classList.remove("online");
+        espStatus.classList.add("offline");
+      }
+    }
+
+    function logout() {
+      localStorage.removeItem("adminToken");
+      window.location.href = "admin-login.html";
     }
 
     loadDashboard();
-    setInterval(loadDashboard, 1000); // refresh every 1 second
+    setInterval(loadDashboard, 30000); // refresh status every 30s
   </script>
 </body>
 </html>
