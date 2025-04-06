@@ -1,157 +1,222 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Admin Portal</title>
-  <link rel="stylesheet" href="styles.css" />
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 0;
-      background: #f4f4f4;
-    }
-    header {
-      background: #333;
-      color: #fff;
-      padding: 10px 20px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-    .nav-links {
-      list-style: none;
-      display: flex;
-      gap: 1rem;
-    }
-    .nav-links a {
-      color: white;
-      text-decoration: none;
-      padding: 5px 10px;
-      border-radius: 5px;
-      transition: background 0.3s;
-    }
-    .nav-links a:hover {
-      background: #555;
-    }
-    main {
-      padding: 20px;
-    }
-    h2 {
-      margin-top: 0;
-    }
-    .dashboard-section {
-      background: white;
-      border-radius: 10px;
-      padding: 20px;
-      margin-bottom: 20px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
-    }
-    .status {
-      display: inline-block;
-      padding: 5px 12px;
-      border-radius: 20px;
-      font-weight: bold;
-      color: white;
-      margin-left: 10px;
-    }
-    .online { background: green; }
-    .offline { background: red; }
-  </style>
-</head>
-<body>
-  <header>
-    <h1>Admin Dashboard <span id="espStatus" class="status offline">Offline</span></h1>
-    <ul class="nav-links">
-      <li><a href="admin-portal.html">Dashboard</a></li>
-      <li><a href="manage-rfid.html">Manage RFID Tags</a></li>
-      <li><a href="#" onclick="logout()">Logout</a></li>
-    </ul>
-  </header>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Admin Portal</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="styles.css" />
+    <style>
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        margin: 0;
+        background: #eef2f5;
+        color: #333;
+      }
 
-  <main>
-    <section class="dashboard-section" id="summary">
-      <h2>System Summary</h2>
-      <p><strong>Total Vehicles:</strong> <span id="totalVehicles"></span></p>
-      <p><strong>Active Wallets:</strong> <span id="activeWallets"></span></p>
-      <p><strong>Total Fines Issued:</strong> ₹<span id="totalFines"></span></p>
-    </section>
+      header {
+        background: #2c3e50;
+        color: #ecf0f1;
+        padding: 15px 30px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
 
-    <section class="dashboard-section" id="logins">
-      <h2>Recent User Logins</h2>
-      <ul id="loginList"></ul>
-    </section>
+      .nav-links {
+        list-style: none;
+        display: flex;
+        gap: 1.2rem;
+        margin: 0;
+        padding: 0;
+      }
 
-    <section class="dashboard-section" id="rfidScans">
-      <h2>Recent RFID Scans</h2>
-      <ul id="scanList"></ul>
-    </section>
-  </main>
+      .nav-links a {
+        color: #ecf0f1;
+        text-decoration: none;
+        padding: 8px 15px;
+        border-radius: 5px;
+        background: transparent;
+        transition: background 0.3s, color 0.3s;
+      }
 
-  <script>
-    const token = localStorage.getItem("adminToken");
+      .nav-links a:hover {
+        background: #34495e;
+      }
 
-    async function loadDashboard() {
-      const res = await fetch("/api/admin/dashboard", {
-        headers: { Authorization: token },
-      });
-      const data = await res.json();
+      main {
+        padding: 30px;
+        max-width: 1000px;
+        margin: 0 auto;
+      }
 
-      if (data.warn !== "Successful") {
-        alert("Session expired or not authorized.");
+      h2 {
+        margin-top: 0;
+        color: #2c3e50;
+        font-size: 1.5rem;
+      }
+
+      .dashboard-section {
+        background: #ffffff;
+        border-radius: 12px;
+        padding: 25px;
+        margin-bottom: 25px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+      }
+
+      .status {
+        display: inline-block;
+        padding: 6px 14px;
+        border-radius: 50px;
+        font-weight: 600;
+        color: white;
+        margin-left: 15px;
+        font-size: 0.9rem;
+      }
+
+      .online {
+        background: #2ecc71;
+      }
+      .offline {
+        background: #e74c3c;
+      }
+
+      .unregistered {
+        color: #e74c3c;
+        font-weight: bold;
+      }
+
+      ul {
+        padding-left: 20px;
+        margin: 10px 0;
+      }
+
+      ul li {
+        padding: 6px 0;
+        border-bottom: 1px solid #eee;
+        font-size: 0.95rem;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>
+        Admin Dashboard
+        <span id="espStatus" class="status offline">Offline</span>
+      </h1>
+      <ul class="nav-links">
+        <li><a href="admin-portal.html">Dashboard</a></li>
+        <li><a href="manage-rfid.html">Manage RFID Tags</a></li>
+        <li><a href="#" onclick="logout()">Logout</a></li>
+      </ul>
+    </header>
+
+    <main>
+      <section class="dashboard-section" id="summary">
+        <h2>System Summary</h2>
+        <p>
+          <strong>Total Vehicles:</strong> <span id="totalVehicles">-</span>
+        </p>
+        <p>
+          <strong>Active Wallets:</strong> <span id="activeWallets">-</span>
+        </p>
+        <p>
+          <strong>Total Fines Issued:</strong> ₹<span id="totalFines">-</span>
+        </p>
+      </section>
+
+      <section class="dashboard-section" id="logins">
+        <h2>Recent User Logins</h2>
+        <ul id="loginList"></ul>
+      </section>
+
+      <section class="dashboard-section" id="rfidScans">
+        <h2>Recent RFID Scans</h2>
+        <p>
+          <strong>Registered:</strong> <span id="registeredCount">0</span> |
+          <strong>Unregistered:</strong> <span id="unregisteredCount">0</span>
+        </p>
+        <ul id="scanList"></ul>
+      </section>
+    </main>
+
+    <script>
+      const token = localStorage.getItem("adminToken");
+      let lastHeartbeat = null;
+
+      function logout() {
+        localStorage.removeItem("adminToken");
         window.location.href = "admin-login.html";
-        return;
       }
 
-      document.getElementById("totalVehicles").textContent = data.stats.totalVehicles;
-      document.getElementById("activeWallets").textContent = data.stats.activeWallets;
-      document.getElementById("totalFines").textContent = data.stats.totalFinesIssued;
+      async function loadDashboard() {
+        const res = await fetch("/api/admin/dashboard", {
+          headers: { Authorization: token },
+        });
+        const data = await res.json();
 
-      const loginList = document.getElementById("loginList");
-      loginList.innerHTML = "";
-      data.userLoginTimes.forEach(user => {
-        const li = document.createElement("li");
-        li.textContent = `${user.name} logged in at ${new Date(user.loginTime).toLocaleString()}`;
-        loginList.appendChild(li);
-      });
+        if (data.warn !== "Successful") {
+          alert("Session expired or not authorized.");
+          window.location.href = "admin-login.html";
+          return;
+        }
 
-      const scanList = document.getElementById("scanList");
-      scanList.innerHTML = "";
-      data.recentRFIDScans.forEach(scan => {
-        const li = document.createElement("li");
-        li.textContent = `${scan.vehicle} scanned on ${scan.date} at ${scan.time} (${scan.location.village}, ${scan.location.district}, ${scan.location.state})`;
-        scanList.appendChild(li);
-      });
+        document.getElementById("totalVehicles").textContent =
+          data.stats.totalVehicles;
+        document.getElementById("activeWallets").textContent =
+          data.stats.activeWallets;
+        document.getElementById("totalFines").textContent =
+          data.stats.totalFinesIssued;
 
-      // ESP32 Status Check: if a scan has occurred in last 60 seconds
-      const latestScanTime = data.recentRFIDScans[0]?.time;
-      const today = new Date();
-      const nowTime = today.toTimeString().split(" ")[0];
-      const [nowH, nowM, nowS] = nowTime.split(":".map(Number));
-      const [scanH, scanM, scanS] = latestScanTime?.split(":".map(Number) || [0,0,0]);
+        const loginList = document.getElementById("loginList");
+        loginList.innerHTML = "";
+        data.userLoginTimes.forEach((user) => {
+          const li = document.createElement("li");
+          li.textContent = `${user.name} logged in at ${new Date(
+            user.loginTime
+          ).toLocaleString()}`;
+          loginList.appendChild(li);
+        });
 
-      const nowSec = nowH * 3600 + nowM * 60 + nowS;
-      const scanSec = scanH * 3600 + scanM * 60 + scanS;
+        const scanList = document.getElementById("scanList");
+        scanList.innerHTML = "";
 
-      const espStatus = document.getElementById("espStatus");
-      if ((nowSec - scanSec) <= 60) {
-        espStatus.textContent = "Online";
-        espStatus.classList.remove("offline");
-        espStatus.classList.add("online");
-      } else {
-        espStatus.textContent = "Offline";
-        espStatus.classList.remove("online");
-        espStatus.classList.add("offline");
+        let registeredCount = 0;
+        let unregisteredCount = 0;
+
+        data.recentRFIDScans.forEach((scan) => {
+          const li = document.createElement("li");
+          li.innerHTML = `${scan.vehicle} scanned on ${scan.date} at ${scan.time} (${scan.location.village}, ${scan.location.district}, ${scan.location.state})`;
+
+          if (scan.registered) {
+            registeredCount++;
+          } else {
+            li.classList.add("unregistered");
+            unregisteredCount++;
+          }
+
+          scanList.appendChild(li);
+        });
+
+        document.getElementById("registeredCount").innerText = registeredCount;
+        document.getElementById("unregisteredCount").innerText =
+          unregisteredCount;
+
+        // ESP32 Status based on lastHeartbeat timestamp
+        const espStatusEl = document.getElementById("espStatus");
+        if (data.espOnline) {
+          espStatusEl.textContent = "Online";
+          espStatusEl.classList.remove("offline");
+          espStatusEl.classList.add("online");
+        } else {
+          espStatusEl.textContent = "Offline";
+          espStatusEl.classList.remove("online");
+          espStatusEl.classList.add("offline");
+        }
       }
-    }
 
-    function logout() {
-      localStorage.removeItem("adminToken");
-      window.location.href = "admin-login.html";
-    }
-
-    loadDashboard();
-    setInterval(loadDashboard, 30000); // refresh status every 30s
-  </script>
-</body>
+      loadDashboard();
+      setInterval(loadDashboard, 1000); // refresh every 1 second
+    </script>
+  </body>
 </html>

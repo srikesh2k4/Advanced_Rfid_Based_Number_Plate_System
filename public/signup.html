@@ -89,15 +89,7 @@
         const data = await res.json();
         message.textContent = data.message || data.error;
         if(data.warn === "Successful"){
-<<<<<<< HEAD
-<<<<<<< HEAD
-          // Redirect to login page on success========
-=======
-          // Redirect to login page on success
->>>>>>> parent of ae03d99 (thirdcommit)
-=======
-          // Redirect to login page on success
->>>>>>> parent of ae03d99 (thirdcommit)
+          // Redirect
           window.location.href = "login.html";
         }
       } catch (error) {

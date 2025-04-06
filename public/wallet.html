@@ -5,67 +5,139 @@
     <title>User Wallet</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="stylesheet" href="styles.css" />
-    <style>
-      nav {
-        background-color: #003366;
-        padding: 10px;
-        text-align: center;
-      }
+<style>
+body {
+  font-family: "Segoe UI", sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: #f4f7fa;
+}
 
-      nav a {
-        color: white;
-        text-decoration: none;
-        margin: 0 15px;
-        font-weight: bold;
-      }
+header {
+  background-color: #003366;
+  color: white;
+  padding: 15px 0;
+  text-align: center;
+}
 
-      nav a:hover {
-        text-decoration: underline;
-      }
+header h1 {
+  margin: 0;
+  font-size: 28px;
+}
 
-      .logout-btn {
-        background: crimson;
-        color: white;
-        border: none;
-        padding: 6px 12px;
-        cursor: pointer;
-        border-radius: 4px;
-        font-weight: bold;
-        margin-left: 10px;
-      }
+nav {
+  background-color: #003366;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 10px 0;
+  gap: 20px;
+  flex-wrap: wrap;
+}
 
-      .logout-btn:hover {
-        background-color: darkred;
-      }
+nav a,
+nav .logout-btn {
+  color: #fff;
+  text-decoration: none;
+  font-weight: bold;
+  padding: 8px 16px;
+  border-radius: 4px;
+  transition: background-color 0.3s;
+}
 
-      table {
-        width: 100%;
-        margin-top: 15px;
-        border-collapse: collapse;
-      }
+nav a:hover {
+  background-color: #005bb5;
+}
 
-      th, td {
-        padding: 10px;
-        border: 1px solid #ccc;
-        text-align: left;
-      }
+nav .logout-btn {
+  background-color: crimson;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+}
 
-      th {
-        background-color: #0074d9;
-        color: white;
-      }
+nav .logout-btn:hover {
+  background-color: darkred;
+}
 
-      tr:nth-child(even) {
-        background-color: #f4f4f4;
-      }
+/* Main Content */
+main {
+  max-width: 1000px;
+  margin: 30px auto;
+  background: #fff;
+  padding: 25px 30px;
+  border-radius: 8px;
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
+}
 
-      #status {
-        margin-top: 20px;
-        text-align: center;
-        color: red;
-        font-weight: bold;
-      }
-    </style>
+/* User Info */
+#userInfo {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+#userInfo h2, #userInfo h3 {
+  margin: 10px 0;
+  color: #003366;
+}
+
+/* Table Styling */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 15px;
+}
+
+th, td {
+  padding: 12px 15px;
+  border: 1px solid #ccc;
+  text-align: left;
+}
+
+th {
+  background-color: #0074d9;
+  color: white;
+}
+
+tr:nth-child(even) {
+  background-color: #f4f4f4;
+}
+
+tr:hover {
+  background-color: #e6f2ff;
+}
+
+/* Status Message */
+#status {
+  margin-top: 20px;
+  text-align: center;
+  color: red;
+  font-weight: bold;
+  font-size: 16px;
+}
+
+/* Responsive Design */
+@media (max-width: 600px) {
+  nav {
+    gap: 10px;
+    padding: 15px;
+  }
+
+  nav a,
+  nav .logout-btn {
+    padding: 6px 12px;
+  }
+
+  table, th, td {
+    font-size: 14px;
+  }
+
+  main {
+    padding: 20px;
+  }
+}
+</style>
+</style>
   </head>
   <body>
     <header>
@@ -74,8 +146,8 @@
         <a href="index.html">Home</a>
         <a href="payments.html">Payments</a>
         <a href="wallet.html">Wallet</a>
-        <button class="logout-btn" onclick="logout()">Logout</button>
-      </nav>
+        <a href=""><button class="logout-btn" onclick="logout()">Logout</button></a>
+      </nav>      
     </header>
 
     <main>
@@ -109,7 +181,7 @@
 
       async function loadWallet() {
         try {
-          const res = await fetch("http://192.168.32.86:4000/api/wallet", {
+          const res = await fetch("http://192.168.191.86:4000/api/wallet", {
             headers: {
               Authorization: token,
             },
@@ -157,42 +229,6 @@
       // Load wallet now + auto-refresh every 5 seconds
       loadWallet();
       setInterval(loadWallet, 5);
-      <div class="wallet-info">
-  <h2>Wallet Balance: ₹<span id="wallet-balance">--</span></h2>
-</div>
-
-<h3>Payment History</h3>
-<ul id="payment-history"></ul>
-
     </script>
-    <script>
-      const token = localStorage.getItem("token");
-    
-      async function loadWallet() {
-        const res = await fetch("/api/user/wallet", {
-          headers: { Authorization: token }
-        });
-        const data = await res.json();
-    
-        if (data.balance !== undefined) {
-          document.getElementById("wallet-balance").textContent = data.balance;
-    
-          const historyList = document.getElementById("payment-history");
-          historyList.innerHTML = "";
-          data.history.reverse().forEach(tx => {
-            const li = document.createElement("li");
-            li.textContent = `${tx.date.split("T")[0]} - ₹${-tx.amount} (${tx.description})`;
-            historyList.appendChild(li);
-          });
-        }
-      }
-    
-      // Call this on page load
-      loadWallet();
-    
-      // Optional: Auto-refresh every 10 seconds
-      setInterval(loadWallet, 10000);
-    </script>
-    
   </body>
 </html>

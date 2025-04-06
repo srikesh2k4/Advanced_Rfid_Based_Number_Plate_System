@@ -26,6 +26,7 @@
       margin: 0;
       font-size: 2rem;
       letter-spacing: 1px;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.7);
     }
 
     nav .nav-links {
@@ -51,9 +52,11 @@
       transition: all 0.3s ease;
     }
 
-    nav .nav-links a:hover {
+    nav .nav-links a:hover,
+    nav .nav-links a.active {
       background-color: rgba(255, 255, 255, 0.15);
       border-color: #fff;
+      font-weight: bold;
     }
 
     .main-content {
@@ -62,6 +65,8 @@
       max-width: 700px;
       margin: auto;
       animation: fadeIn 2s ease-in;
+      background-color: rgba(0, 0, 0, 0.6);
+      border-radius: 12px;
     }
 
     .main-content h2 {
@@ -100,6 +105,7 @@
       width: 100%;
       bottom: 0;
       left: 0;
+      box-shadow: 0 -2px 10px rgba(0,0,0,0.3);
     }
 
     @keyframes slideDown {
@@ -133,6 +139,14 @@
         padding: 6px 12px;
       }
     }
+
+    @media (max-width: 480px) {
+      .cta-btn {
+        width: 100%;
+        font-size: 1rem;
+        padding: 12px;
+      }
+    }
   </style>
 </head>
 <body>
@@ -141,14 +155,13 @@
     <h1>🚗 RFID-Based Number Plate System</h1>
     <nav>
       <ul class="nav-links">
-        <li><a href="index.html">Home</a></li>
+        <li><a href="index.html" class="active">Home</a></li>
         <li><a href="login.html">Login</a></li>
         <li><a href="signup.html">Signup</a></li>
         <li><a href="wallet.html">Wallet</a></li>
         <li><a href="payments.html">Payments</a></li>
         <li><a href="admin-login.html">Admin Login</a></li>
-        <li><a href="#" id="linkVehicleNav">Link Vehicle</a></li>
-      </ul>                 
+      </ul>
     </nav>
   </header>
 
@@ -166,22 +179,5 @@
   <footer class="main-footer">
     &copy; 2025 RFID Number Plate System | Designed with ❤️ for Smart Mobility
   </footer>
-  <script>
-  document.getElementById("linkVehicleNav").addEventListener("click", function (e) {
-    e.preventDefault();
-    const token = localStorage.getItem("token");
-     else {
-      window.location.href = "link-vehicle.html";
-    }
-  });
-</script>
-<script>
-  document.getElementById("linkVehicleNav").addEventListener("click", function (e) {
-    e.preventDefault();
-    const token = localStorage.getItem("token");
-    window.location.href = token ? "link-vehicle.html" : "login.html";
-  });
-</script>
-
 </body>
 </html>

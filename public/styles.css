@@ -1,241 +1,127 @@
 /* styles.css */
 
-/* Reset & Base Typography */
+/* Theme Variables */
+:root {
+  --primary-color: #007bff;
+  --primary-hover: #0056b3;
+  --dark-bg: #343a40;
+  --light-bg: #f4f7f8;
+  --text-color: #333;
+  --white: #ffffff;
+  --danger: #dc3545;
+  --success: #28a745;
+  --shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+}
+
+/* Reset & Base */
 * {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
-  font-family: 'Segoe UI', sans-serif;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 body {
-  background: #f4f7f8;
+  background-color: var(--light-bg);
+  color: var(--text-color);
+  padding: 0;
+  margin: 0;
   line-height: 1.6;
 }
 
-/* Header & Navigation */
+/* Header */
 .main-header {
-  background-color: #343a40;
+  background-color: var(--dark-bg);
   padding: 1rem;
-  color: white;
+  color: var(--white);
   text-align: center;
-  font-size: 1.25rem;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-  margin-bottom: 2rem;
+  box-shadow: var(--shadow);
 }
 .main-header h1 {
-  margin: 0;
-  letter-spacing: 1px;
+  margin-bottom: 0.5rem;
 }
 .nav-links {
   list-style: none;
   display: flex;
   justify-content: center;
-  margin-top: 0.5rem;
-}
-.nav-links li {
-  margin: 0 10px;
+  gap: 1rem;
 }
 .nav-links a {
-  color: #fff;
+  color: var(--white);
   text-decoration: none;
-  font-size: 1rem;
 }
 .nav-links a:hover {
   text-decoration: underline;
 }
 
-/* Containers */
-.login-container,
-.wallet-container {
-  background: white;
+/* Login Container */
+.login-container {
+  background: var(--white);
+  max-width: 400px;
+  margin: 3rem auto;
   padding: 2rem;
-  border-radius: 12px;
-  max-width: 500px;
-  margin: 1rem auto;
-  box-shadow: 0 6px 16px rgba(0,0,0,0.1);
+  border-radius: 10px;
+  box-shadow: var(--shadow);
 }
-
-/* Headings */
-h2 {
+.login-container h2 {
   text-align: center;
   margin-bottom: 1.5rem;
-  color: #333;
+  color: var(--text-color);
 }
-
-/* Input Groups */
 .input-group {
-  margin-bottom: 1.2rem;
+  margin-bottom: 1rem;
 }
 label {
   display: block;
   margin-bottom: 0.5rem;
-  font-weight: 500;
-  color: #444;
+  font-weight: bold;
 }
-input, select {
+input {
   width: 100%;
   padding: 0.75rem;
   border: 1px solid #ccc;
-  border-radius: 8px;
+  border-radius: 6px;
   font-size: 1rem;
 }
+input:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
+}
 
-/* Buttons */
+/* Button */
 button {
   width: 100%;
   padding: 0.75rem;
-  background-color: #007bff;
-  color: white;
+  background-color: var(--primary-color);
+  color: var(--white);
   font-size: 1rem;
   border: none;
-  border-radius: 8px;
+  border-radius: 6px;
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  margin-top: 1rem;
+  transition: background-color 0.3s;
 }
 button:hover {
-  background-color: #0056b3;
+  background-color: var(--primary-hover);
 }
 
-/* Links */
-.signup-link {
-  text-align: center;
+/* Message Display */
+#message {
   margin-top: 1rem;
-  font-size: 0.95rem;
-}
-.signup-link a {
-  color: #007bff;
-  text-decoration: none;
-}
-.signup-link a:hover {
-  text-decoration: underline;
-}
-
-/* Lists (Wallet History, Dashboard) */
-.wallet-history ul,
-.dashboard-section ul {
-  list-style: none;
-  padding-left: 0;
-}
-.wallet-history li,
-.dashboard-section li {
-  padding: 0.8rem 0;
-  border-bottom: 1px solid #eee;
-}
-
-/* Admin Dashboard Sections */
-.admin-dashboard {
-  margin-top: 2rem;
-}
-.dashboard-section {
-  margin-bottom: 2rem;
-  background: #f8f9fa;
-  padding: 1.2rem;
-  border-radius: 10px;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
-}
-.dashboard-section h4 {
-  margin-bottom: 0.75rem;
-  color: #333;
-}
-.dashboard-section form {
-  display: flex;
-  gap: 0.5rem;
-}
-.dashboard-section input {
-  flex: 1;
-}
-
-/* Responsive */
-@media (max-width: 600px) {
-  .login-container, .wallet-container {
-    margin: 1rem;
-    padding: 1.5rem;
-  }
-  .main-header {
-    font-size: 1rem;
-    padding: 0.75rem;
-  }
-}
-/* Global Styles */
-body {
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background: #f4f7fa;
-  color: #333;
-  margin: 0;
-  padding: 0;
-}
-
-header {
-  background-color: #003366;
-  color: #fff;
-  padding: 20px;
   text-align: center;
-}
-
-h1 {
-  margin: 0;
-}
-
-main {
-  max-width: 800px;
-  margin: 30px auto;
-  background-color: #fff;
-  padding: 30px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-  border-radius: 8px;
-}
-
-#userInfo {
-  margin-bottom: 20px;
-  padding: 15px;
-  background-color: #eaf3fb;
-  border-left: 4px solid #0074d9;
-  border-radius: 5px;
-}
-
-h2 span,
-h3 span {
-  color: #0074d9;
-}
-
-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: 10px;
-}
-
-th,
-td {
-  padding: 12px;
-  text-align: left;
-  border-bottom: 1px solid #ddd;
-}
-
-th {
-  background-color: #0074d9;
-  color: white;
-}
-
-tr:nth-child(even) {
-  background-color: #f9f9f9;
-}
-
-#status {
-  margin-top: 20px;
-  color: red;
   font-weight: bold;
-  text-align: center;
+}
+#message.success {
+  color: var(--success);
+}
+#message.error {
+  color: var(--danger);
 }
 
 /* Responsive Design */
-@media (max-width: 600px) {
-  main {
-    padding: 15px;
-  }
-
-  table,
-  th,
-  td {
-    font-size: 14px;
+@media (max-width: 500px) {
+  .login-container {
+    margin: 1rem;
+    padding: 1.5rem;
   }
 }

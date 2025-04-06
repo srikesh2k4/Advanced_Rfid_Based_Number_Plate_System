@@ -1,205 +1,269 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Add Money to Wallet</title>
-  <link rel="stylesheet" href="styles.css" />
-  <style>
-    body {
-      font-family: "Segoe UI", sans-serif;
-      background-color: #f4f7fa;
-      margin: 0;
-      padding: 0;
-    }
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Add Money to Wallet</title>
+    <link rel="stylesheet" href="styles.css" />
+    <style>
+      /* Wallet Page Styles */
 
-    .main-header {
-      background-color: #003366;
-      color: #fff;
-      padding: 15px;
-      text-align: center;
-    }
+      body {
+        font-family: "Segoe UI", sans-serif;
+        background-color: #f4f7fa;
+        margin: 0;
+        padding: 0;
+        color: #333;
+      }
 
-    .main-header nav ul {
-      list-style: none;
-      padding: 0;
-      margin: 10px 0 0;
-      display: flex;
-      justify-content: center;
-      gap: 20px;
-    }
+      .main-header {
+        background-color: #003366;
+        color: #fff;
+        padding: 20px 15px;
+        text-align: center;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+      }
+      .main-header h1 {
+        margin-bottom: 10px;
+      }
+      .main-header nav ul {
+        list-style: none;
+        display: flex;
+        justify-content: center;
+        gap: 20px;
+        padding: 0;
+        margin: 0;
+        flex-wrap: wrap;
+      }
+      .main-header nav a {
+        color: #fff;
+        text-decoration: none;
+        font-weight: bold;
+        padding: 5px 10px;
+      }
+      .main-header nav a:hover {
+        background-color: #005bb5;
+        border-radius: 4px;
+      }
 
-    .main-header nav a {
-      color: #fff;
-      text-decoration: none;
-      font-weight: bold;
-    }
+      .wallet-container {
+        max-width: 500px;
+        margin: 40px auto;
+        background: #fff;
+        padding: 30px;
+        border-radius: 10px;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+      }
 
-    .main-header nav a:hover {
-      text-decoration: underline;
-    }
+      #welcomeUser {
+        text-align: center;
+        color: #003366;
+        margin-bottom: 20px;
+      }
 
-    .wallet-container {
-      max-width: 500px;
-      margin: 40px auto;
-      background: #fff;
-      padding: 30px;
-      border-radius: 8px;
-      box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
-    }
+      .wallet-balance {
+        background-color: #e8f3ff;
+        padding: 20px;
+        border-left: 5px solid #0074d9;
+        border-radius: 6px;
+        margin-bottom: 30px;
+        text-align: center;
+      }
+      .wallet-balance p {
+        margin: 0;
+        font-weight: bold;
+      }
+      #walletBalance {
+        font-size: 2rem;
+        margin-top: 5px;
+        color: #0074d9;
+      }
 
-    .wallet-balance {
-      background-color: #e8f3ff;
-      padding: 15px;
-      border-left: 4px solid #0074d9;
-      margin-bottom: 20px;
-    }
+      .payment-form h3 {
+        color: #003366;
+        margin-bottom: 20px;
+        text-align: center;
+      }
 
-    .payment-form h3 {
-      margin-top: 20px;
-      color: #003366;
-    }
+      .input-group {
+        margin-bottom: 20px;
+      }
+      .input-group label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 600;
+      }
+      .input-group input,
+      .input-group select {
+        width: 100%;
+        padding: 10px 12px;
+        border: 1px solid #ccc;
+        border-radius: 6px;
+        font-size: 1rem;
+      }
+      select[disabled] {
+        background-color: #f0f0f0;
+        color: #555;
+      }
 
-    .input-group {
-      margin-bottom: 15px;
-    }
+      button {
+        background-color: #0074d9;
+        color: #fff;
+        border: none;
+        padding: 14px;
+        font-size: 16px;
+        border-radius: 6px;
+        cursor: pointer;
+        width: 100%;
+        transition: background-color 0.3s;
+      }
+      button:hover {
+        background-color: #005bb5;
+      }
 
-    .input-group label {
-      display: block;
-      font-weight: bold;
-    }
+      .error {
+        color: red;
+        font-size: 14px;
+        margin-top: -10px;
+        margin-bottom: 10px;
+      }
 
-    .input-group input {
-      width: 100%;
-      padding: 10px;
-      border: 1px solid #ccc;
-      margin-top: 5px;
-      border-radius: 4px;
-    }
+      /* Responsive */
+      @media (max-width: 600px) {
+        .main-header nav ul {
+          flex-direction: column;
+          gap: 10px;
+        }
+        .wallet-container {
+          margin: 20px;
+          padding: 20px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header class="main-header">
+      <h1>RFID-Based Number Plate System</h1>
+      <nav>
+        <ul class="nav-links">
+          <li><a href="index.html">Home</a></li>
+          <li><a href="wallet.html">Wallet</a></li>
+          <li><a href="payments.html">Top-up</a></li>
+          <li><a href="#" onclick="logout()">Logout</a></li>
+        </ul>
+      </nav>
+    </header>
 
-    select[disabled] {
-      background-color: #f0f0f0;
-    }
+    <div class="wallet-container">
+      <h2 id="welcomeUser">Welcome, User</h2>
+      <div class="wallet-balance">
+        <p>Your Wallet Balance:</p>
+        <h1 id="walletBalance">₹ 0.00</h1>
+      </div>
 
-    button {
-      background-color: #0074d9;
-      color: #fff;
-      border: none;
-      padding: 12px 20px;
-      font-size: 16px;
-      border-radius: 4px;
-      cursor: pointer;
-      width: 100%;
-    }
+      <form class="payment-form" id="paymentForm">
+        <h3>Add Money to Wallet</h3>
 
-    button:hover {
-      background-color: #005bb5;
-    }
+        <div class="input-group">
+          <label for="vehicle">Vehicle Number</label>
+          <input
+            type="text"
+            id="vehicle"
+            name="vehicle"
+            required
+            placeholder="E.g. TS09EZ1234"
+          />
+        </div>
 
-    .error {
-      color: red;
-      font-size: 14px;
-      margin-bottom: 10px;
-    }
-  </style>
-</head>
-<body>
-  <header class="main-header">
-    <h1>RFID-Based Number Plate System</h1>
-    <nav>
-      <ul class="nav-links">
-        <li><a href="index.html">Home</a></li>
-        <li><a href="wallet.html">Wallet</a></li>
-        <li><a href="payments.html">Top-up</a></li>
-        <li><a href="#" onclick="logout()">Logout</a></li>
-      </ul>
-    </nav>
-  </header>
+        <div class="input-group">
+          <label for="amount">Amount (₹)</label>
+          <input
+            type="number"
+            id="amount"
+            name="amount"
+            required
+            min="1"
+            placeholder="Enter amount"
+          />
+        </div>
 
-  <div class="wallet-container">
-    <h2 id="welcomeUser">Welcome, User</h2>
-    <div class="wallet-balance">
-      <p>Your Wallet Balance:</p>
-      <h1 id="walletBalance">₹ 0.00</h1>
+        <div class="input-group">
+          <label for="reason">Top-up Purpose</label>
+          <select id="reason" name="reason" disabled>
+            <option value="wallet-topup" selected>Add to Wallet</option>
+          </select>
+        </div>
+
+        <button type="submit">Add Money</button>
+      </form>
     </div>
 
-    <form class="payment-form" id="paymentForm">
-      <h3>Add Money to Wallet</h3>
+    <script>
+      const token = localStorage.getItem("token");
+      if (!token) window.location.href = "login.html";
 
-      <div class="input-group">
-        <label for="vehicle">Vehicle Number</label>
-        <input type="text" id="vehicle" name="vehicle" required placeholder="E.g. TS09EZ1234" />
-      </div>
-
-      <div class="input-group">
-        <label for="amount">Amount (₹)</label>
-        <input type="number" id="amount" name="amount" required min="1" placeholder="Enter amount" />
-      </div>
-
-      <div class="input-group">
-        <label for="reason">Top-up Purpose</label>
-        <select id="reason" name="reason" disabled>
-          <option value="wallet-topup" selected>Add to Wallet</option>
-        </select>
-      </div>
-
-      <button type="submit">Add Money</button>
-    </form>
-  </div>
-
-  <script>
-    const token = localStorage.getItem("token");
-    if (!token) window.location.href = "login.html";
-
-    function logout() {
-      localStorage.clear();
-      window.location.href = "login.html";
-    }
-
-    async function loadWallet() {
-      const userName = localStorage.getItem("userName") || "User";
-      document.getElementById("welcomeUser").innerText = "Welcome, " + userName;
-      try {
-        const res = await fetch('/api/wallet', {
-          method: "GET",
-          headers: { "Content-Type": "application/json", Authorization: token }
-        });
-        const data = await res.json();
-        if (data.balance !== undefined) {
-          document.getElementById("walletBalance").innerText = "₹ " + parseFloat(data.balance).toFixed(2);
-        }
-      } catch (err) {
-        alert("Failed to load wallet data.");
+      function logout() {
+        localStorage.clear();
+        window.location.href = "login.html";
       }
-    }
 
-    document.getElementById("paymentForm").addEventListener("submit", async (e) => {
-      e.preventDefault();
-
-      const vehicle = document.getElementById("vehicle").value.trim().toUpperCase();
-      const amount = document.getElementById("amount").value;
-      const reason = "wallet-topup"; // Fixed reason for adding money
-
-      try {
-        const res = await fetch('/api/payments', {
-          method: "POST",
-          headers: { "Content-Type": "application/json", Authorization: token },
-          body: JSON.stringify({ vehicle, amount, reason })
-        });
-        const data = await res.json();
-        if (data.warn === "Successful") {
-          alert(data.message);
-          document.getElementById("paymentForm").reset();
-          loadWallet();
-        } else {
-          alert("Payment failed: " + data.error);
+      async function loadWallet() {
+        const userName = localStorage.getItem("userName") || "User";
+        document.getElementById("welcomeUser").innerText =
+          "Welcome, " + userName;
+        try {
+          const res = await fetch("/api/wallet", {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: token,
+            },
+          });
+          const data = await res.json();
+          if (data.balance !== undefined) {
+            document.getElementById("walletBalance").innerText =
+              "₹ " + parseFloat(data.balance).toFixed(2);
+          }
+        } catch (err) {
+          alert("Failed to load wallet data.");
         }
-      } catch (err) {
-        alert("An error occurred. Please try again.");
       }
-    });
 
-    window.onload = loadWallet;
-  </script>
-</body>
+      document
+        .getElementById("paymentForm")
+        .addEventListener("submit", async (e) => {
+          e.preventDefault();
+
+          const vehicle = document
+            .getElementById("vehicle")
+            .value.trim()
+            .toUpperCase();
+          const amount = document.getElementById("amount").value;
+          const reason = "wallet-topup"; // Fixed reason for adding money
+
+          try {
+            const res = await fetch("/api/payments", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: token,
+              },
+              body: JSON.stringify({ vehicle, amount, reason }),
+            });
+            const data = await res.json();
+            if (data.warn === "Successful") {
+              alert(data.message);
+              document.getElementById("paymentForm").reset();
+              loadWallet();
+            } else {
+              alert("Payment failed: " + data.error);
+            }
+          } catch (err) {
+            alert("An error occurred. Please try again.");
+          }
+        });
+
+      window.onload = loadWallet;
+    </script>
+  </body>
 </html>

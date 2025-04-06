@@ -1,91 +1,200 @@
 <!DOCTYPE html>
 <html>
-<head>
-  <title>Manage RFID Cards</title>
-  <link rel="stylesheet" href="styles.css" />
-  <style>
-    form input {
-      display: block;
-      margin-bottom: 10px;
-      padding: 8px;
-      width: 300px;
-    }
+  <head>
+    <title>Manage RFID Cards</title>
+    <link rel="stylesheet" href="styles.css" />
+    <style>
+      body {
+        font-family: "Segoe UI", sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #f4f7fa;
+      }
 
-    .form-row {
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-    }
+      header {
+        background-color: #003366;
+        color: white;
+        padding: 20px;
+        text-align: center;
+        position: relative;
+      }
 
-    .form-row input {
-      flex: 1;
-      min-width: 180px;
-    }
+      header h1 {
+        margin: 0;
+        font-size: 28px;
+      }
 
-    #msgBox {
-      margin-top: 20px;
-      font-weight: bold;
-    }
-  </style>
-</head>
-<body>
-  <header>
-    <h1>RFID User Linking</h1>
-    <a href="admin-portal.html">← Back to Admin</a>
-  </header>
+      header a {
+        color: #fff;
+        text-decoration: none;
+        font-weight: bold;
+        position: absolute;
+        left: 20px;
+        top: 50%;
+        transform: translateY(-50%);
+        padding: 8px 16px;
+        border-radius: 4px;
+        transition: background-color 0.3s;
+      }
 
-  <main>
-    <form id="linkForm">
-      <h2>Link RFID to User</h2>
-      <div class="form-row">
+      header a:hover {
+        background-color: #005bb5;
+      }
+
+      main {
+        max-width: 600px;
+        margin: 30px auto;
+        padding: 0 20px;
+      }
+
+      form {
+        background: #fff;
+        padding: 25px;
+        margin-bottom: 20px;
+        border-radius: 8px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      }
+
+      h2 {
+        color: #003366;
+        margin-top: 0;
+        margin-bottom: 20px;
+        font-size: 22px;
+      }
+
+      input[type="email"],
+      input[type="text"] {
+        width: 100%;
+        padding: 12px;
+        margin-bottom: 15px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        box-sizing: border-box;
+        font-size: 16px;
+        transition: border-color 0.3s;
+      }
+
+      input[type="email"]:focus,
+      input[type="text"]:focus {
+        border-color: #0074d9;
+        outline: none;
+      }
+
+      button {
+        width: 100%;
+        padding: 12px;
+        background-color: #0074d9;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        font-size: 16px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: background-color 0.3s;
+      }
+
+      button:hover {
+        background-color: #005bb5;
+      }
+
+      #msgBox {
+        text-align: center;
+        padding: 15px;
+        margin: 0 20px;
+        border-radius: 4px;
+        font-weight: bold;
+        display: none;
+      }
+
+      #msgBox:empty {
+        display: none;
+      }
+
+      #msgBox:not(:empty) {
+        display: block;
+        background-color: #e6f2ff;
+        color: #003366;
+      }
+
+      /* Responsive Design */
+      @media (max-width: 600px) {
+        main {
+          margin: 20px 10px;
+        }
+
+        form {
+          padding: 15px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>RFID User Linking</h1>
+      <a href="admin-portal.html">← Back to Admin</a>
+    </header>
+    <main>
+      <form id="linkForm">
+        <h2>Link RFID to User</h2>
         <input type="email" id="email" placeholder="User Email" required />
-        <input type="text" id="vehicle" placeholder="Vehicle Number (e.g., TS09EZ1234)" required />
-      </div>
-      <input type="text" id="rfid_uid" placeholder="RFID UID (e.g., FD01D804)" required />
-      <button type="submit">Link RFID</button>
-    </form>
+        <input
+          type="text"
+          id="rfid_uid"
+          placeholder="RFID UID (e.g., FD01D804)"
+          required
+        />
+        <button type="submit">Link RFID</button>
+      </form>
 
-    <form id="unlinkForm">
-      <h2>Unlink RFID</h2>
-      <input type="text" id="unlink_uid" placeholder="RFID UID to Unlink" required />
-      <button type="submit">Unlink</button>
-    </form>
+      <form id="unlinkForm">
+        <h2>Unlink RFID</h2>
+        <input
+          type="text"
+          id="unlink_uid"
+          placeholder="RFID UID to Unlink"
+          required
+        />
+        <button type="submit">Unlink</button>
+      </form>
 
-    <div id="msgBox"></div>
-  </main>
+      <div id="msgBox"></div>
+    </main>
 
-  <script>
-    const msgBox = document.getElementById("msgBox");
+    <script>
+      const msgBox = document.getElementById("msgBox");
 
-    document.getElementById("linkForm").addEventListener("submit", async (e) => {
-      e.preventDefault();
-      const email = document.getElementById("email").value;
-      const vehicle = document.getElementById("vehicle").value;
-      const rfid_uid = document.getElementById("rfid_uid").value;
+      document
+        .getElementById("linkForm")
+        .addEventListener("submit", async (e) => {
+          e.preventDefault();
+          const email = document.getElementById("email").value;
+          const rfid_uid = document.getElementById("rfid_uid").value;
 
-      const res = await fetch("/api/admin/link-rfid", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, vehicle, rfid_uid })
-      });
+          const res = await fetch("/api/admin/link-rfid", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email, rfid_uid }),
+          });
 
-      const data = await res.json();
-      msgBox.textContent = data.message || data.error;
-    });
+          const data = await res.json();
+          msgBox.textContent = data.message || data.error;
+        });
 
-    document.getElementById("unlinkForm").addEventListener("submit", async (e) => {
-      e.preventDefault();
-      const rfid_uid = document.getElementById("unlink_uid").value;
+      document
+        .getElementById("unlinkForm")
+        .addEventListener("submit", async (e) => {
+          e.preventDefault();
+          const rfid_uid = document.getElementById("unlink_uid").value;
 
-      const res = await fetch("/api/admin/unlink-rfid", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ rfid_uid })
-      });
+          const res = await fetch("/api/admin/unlink-rfid", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ rfid_uid }),
+          });
 
-      const data = await res.json();
-      msgBox.textContent = data.message || data.error;
-    });
-  </script>
-</body>
+          const data = await res.json();
+          msgBox.textContent = data.message || data.error;
+        });
+    </script>
+  </body>
 </html>
